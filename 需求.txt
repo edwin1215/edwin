@@ -1,2 +1,2 @@
-would you like some to drink?
+would you like some to drink?coffee?orange?coke?
 门店列表、门店主页、活动页接口调用
