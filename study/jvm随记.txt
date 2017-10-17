@@ -1,4 +1,39 @@
 
+JVM原理
+
+
+
+Class文件结构
+
+两种数据类型(类似于C语言结构体的伪结构)
+	无符号数：u1、u2、u4、u8代表1byte、2byte、4byte、8byte
+	表：由多个无符号数或者其他表作为数据项构成复合数据结构，所有表习惯以.info结尾
+
+
+1、魔数(Magic Number)、次版本(Minor Version)、主版本(Major Version)
+2、常量池(Constant Pool)
+	a、字面量(Literal)：如文本字符串、常量值(final)
+	b、符号引用(Symbolic Reference)
+		类和接口的全限定名(Fully Qualified Name)
+		字段的名称和描述符(Descriptor)
+		方法的名称和描述符(Descriptor)
+	
+	14种表结构
+	javap -v xxx.class //查看字节码内容
+	如：CONSTANT_Utf8_info
+	
+3、标志访问(access_flags)
+	class or interface
+	public private protected default
+	是否abstract
+	是否final
+	
+	如：ACC_PUBLIC
+
+4、类索引、父类索引与接口索引集合
+	类索引：	this_class		u2
+	父类索引：	super_class		u2
+	接口索引：	interfaces		u2集合
 
 类的加载过程
 
