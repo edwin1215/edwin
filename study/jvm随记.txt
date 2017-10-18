@@ -13,7 +13,7 @@ Class文件结构
 1、魔数（Magic Number）、次版本（Minor Version）、主版本（Major Version）
 2、常量池（Constant Pool）
 	a、字面量(Literal)：如文本字符串、常量值(final)
-	b、符号引用(Symbolic Reference)
+	b、符号引用(Symbolic References)
 		类和接口的全限定名(Fully Qualified Name)
 		字段的名称和描述符(Descriptor)
 		方法的名称和描述符(Descriptor)
@@ -97,6 +97,9 @@ Class文件结构
 类的加载过程
 
 1、加载load
+	a、通过一个类的全限定名来获取定义此类的二进制字节流
+	b、将二进制字节流所代表的静态存储结构转化为方法区的运行时数据结构
+	c、在内存中生成java.lang.Class对象，作为方法区类的各种数据的访问入口
 2、验证
 	a、文件格式验证
 	b、元数据验证
@@ -106,4 +109,41 @@ Class文件结构
 	为类变量在方法区分配内存并设置其初始值(零值)
 	如果类变量的字段属性表中存在ConstantValue属性(final)，初始化为指定值
 4、解析
-	
+	将常量池中的符号引用替换为直接引用
+		符号引用(Symbolic References)：
+		直接引用(Direct References)：
+5、初始化
+	编译器自动生成<clinit>方法：
+		a、类变量赋值、静态语句块
+		b、虚拟机优先执行父类的<clinit>方法
+		c、不是必须，如果没有类变量、静态代码块则编译器不会生成<clinit>方法
+		d、接口的<clinit>方法不必须调用父类的<clinit>方法，只有父接口有类变量时，父接口才会初始化
+		e、<clinit>方法只会被调用一次，多线程下虚拟机会保证<clinit>方法的线程安全，其他线程阻塞
+
+类加载器
+
+1、启动类加载器（Bootstrap ClassLoader）
+	用于加载<JAVA_HOME>\lib目录、或者-Xbootclasspath参数指定的路径下，虚拟机识别的类库；
+	HotSpot虚拟机是用C++实现的
+2、扩展类加载器（Extension ClassLoader）
+	用于加载<JAVA_HOME>\lib\ext目录、或者java.ext.dirs系统变量所指定的路径下的所有类库
+3、应用程序类加载器（Application ClassLoader）
+	用户加载用户路径（ClassPath）下的类库
+	ClassLoader中getSystemClassLoader()获取，又称系统类加载器
+
+双亲委派机制
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
