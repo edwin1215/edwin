@@ -10,8 +10,8 @@ Class文件结构
 	表：由多个无符号数或者其他表作为数据项构成复合数据结构，所有表习惯以.info结尾
 
 
-1、魔数(Magic Number)、次版本(Minor Version)、主版本(Major Version)
-2、常量池(Constant Pool)
+1、魔数（Magic Number）、次版本（Minor Version）、主版本（Major Version）
+2、常量池（Constant Pool）
 	a、字面量(Literal)：如文本字符串、常量值(final)
 	b、符号引用(Symbolic Reference)
 		类和接口的全限定名(Fully Qualified Name)
@@ -22,7 +22,7 @@ Class文件结构
 	javap -v xxx.class //查看字节码内容
 	如：CONSTANT_Utf8_info
 	
-3、标志访问(access_flags)
+3、访问标志（access_flags）
 	class or interface
 	public private protected default
 	是否abstract
@@ -33,7 +33,66 @@ Class文件结构
 4、类索引、父类索引与接口索引集合
 	类索引：	this_class		u2
 	父类索引：	super_class		u2
-	接口索引：	interfaces		u2集合
+	接口索引：	interfaces		u2集合	入口第一项：u2的接口计数器(interfaces_count)
+
+5、字段表集合（field_info）
+	描述类中的变量：类变量、实例变量
+	描述信息：
+		作用域(public、private...)			boolean
+		实例or类变量(static)				boolean
+		可变性(final)						boolean
+		并发可见性(volatile)				boolean
+		可否被序列化(transient)				boolean
+		数据类型(基本类型、对象、数组)		引用常量池中的常量
+		字段名称							引用常量池中的常量
+	
+	结构：
+		u2					access_flags			访问标志（类似class中的访问标志）
+		u2					name_index				简单名称
+		u2					descriptor_index		方法描述符
+		u2					attributes_count		
+		attribute_info		attributes				attributes_count个
+
+	简单名称：main() -> main，int m -> m
+	描述符：描述字段的数据类型、方法参数、返回值
+		如：[[Ljava/lang/String  -> String[][]
+	全限定名：com.edwin.test -> com/edwin/test;
+	
+6、方法表集合（method_info）
+	基本同上
+	access_flags有区别
+		减少：volatile、transient
+		增加：synchronized、native、strictfp、abstract
+
+7、属性表集合（attribute_info）
+	1）Code属性（方法体中的代码）
+		attribute_name_index		Code
+		attribute_length			属性值的长度
+		max_statck					操作数栈最大深度
+		max_locals					局部变量表存储空间（单位是Slot，1Slot = 32Bit = 4Byte）
+		code_length					源程序编译成字节码后长度
+		code						字节码
+		
+	2）Exception属性
+		记录受查异常
+	3）LineNumberTable属性
+		源码行号和字节码行号(偏移量)对应关系
+	4）LocalVariableTable属性
+		描述栈帧中局部变量表中的变量和java源码中定义的变量之间的关系
+	5）SourceFile属性
+		记录Class文件的源码文件名称（关闭时打印堆栈信息时不显示类名）
+	6）ConstantValue属性
+		通知虚拟机自动为static变量赋值（包括但不仅仅是final）
+	7）InnerClasses属性
+		记录内部类和宿主类的关联
+	8）Deprecated及Synthetic属性
+		不推荐使用、非java源码产生而是由编译器自行添加的
+	9）StackMapTable属性
+		
+	10）Signature属性
+		
+	11）BootstrapMethods属性
+		
 
 类的加载过程
 
