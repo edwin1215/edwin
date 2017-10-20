@@ -113,6 +113,71 @@ Class文件结构
 		
 	11）BootstrapMethods属性
 		
+字节码指令
+1、加载和存储指令
+	用于将数据在栈帧中的局部变量表和操作数栈之间来回传输
+	（T代表数据类型）
+	1）局部变量表---加载--->操作数栈：Tload、Tload_<n>
+	2）操作数栈---存储--->局部变量表：Tstore、Tstore_<n>
+	3）常量---加载--->操作数栈：Tipush、Tconst、Tconst_<T>、aconst_null、ldc、ldc_w
+	4）扩充局部变量表的访问索引：wide
+
+2、运算指令
+	用于对两个操作数栈上的值进行运算，并把结果存入操作数栈顶
+	大体分两种：
+		a、整型数据运算指令符
+		b、浮点型数据运算指令符
+	没有直接支持byte、short、char、boolean的运算指令
+	（T代表数据类型：i-int、l-long、f-float、d-double）
+	1）加法：Tadd
+	2）减法：Tsub
+	3）乘法：Tmul
+	4）除法：Tdiv
+	5）求余：Trem
+	6）取反：Tneg
+	7）位移：Tshl-左移、Tshr-右移、Tushr-无符号右移（int、long）
+	8）按位或：Tor（int、long）
+	9）按位与：Tand（int、long）
+	10）按位异：Txor（int、long）
+	11）局部变量自增：iinc
+	12）比较：dcmpg、dcmpl、fcmpg、fcmpl、lcmp
+	只有除法指令(Tdiv)和求余指令(Trem)中，出现除数为0时-->ArithmeticException
+
+3、类型转换指令
+	T2U
+	
+4、对象创建与访问指令
+	1）创建对象：new
+	2）创建数组对象：newarray、anewarray、multianewarray
+	3）访问类字段、实例字段：getfield、putfield、getstatic、putstatic
+	4）把数组元素---加载--->操作数栈：Taload
+	5）操作数栈---存储--->数组元素：Tastore
+	6）获取数组长度：arraylength
+	7）检查对象类型：instanceof、checkcast
+
+5、操作数栈管理指令
+	1）将操作数栈顶的一个或两个元素出栈：pop、pop2
+	2）复制栈顶的一个或两个数值，将一份或双份的复制值重新压入栈顶：dup、dup2、dup_x1、dup2_x1、dup_x2、dup2_x2
+	3）将栈顶两个数值互换：swap
+
+6、控制转移指令
+	1）条件分支：ifeq、iflt、ifle、ifne、ifgt、ifge、ifnull、ifnonnull、if_icmpeq、if_icmpne...
+	2）复合条件分支：tableswitch、lookupswitch
+	3）无条件分支：goto、goto_w、jsr、jsr_w、ret
+	
+7、方法调用和返回指令
+	1）invokevirtual：调用对象的实例方法，根据对象的实际类型进行分派
+	2）invokeinterface：用于调用接口方法
+	3）invokespecial：用于调用一些需要特殊处理的实例方法，如：对象初始化方法、私有方法、父类方法
+	4）invokestatic：调用类方法
+	5）invokedynamic：在运行时动态解析出调用点限定符所引用的方法
+
+8、异常处理指令
+	athrow
+
+9、同步指令
+	synchronized：monitorenter、monitorexit
+
 
 类的加载过程
 
