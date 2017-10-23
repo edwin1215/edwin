@@ -275,3 +275,45 @@ Class文件结构
 		write			主内存			把store操作的值放到主内存中
 
 
+2、线程的实现
+	a、使用内核线程
+		内核线程：Kernel-Level Thread（KLT）
+			直接由操作系统内核（Kernel）支持的线程
+		轻量级进程：Light Weight Process（LWP）
+			内核线程的一种高级接口，与KLT关系1：1
+	b、使用用户线程
+		用户线程：User Thread（UT）
+			非KLT，及UT
+	c、使用用户线程+轻量级进程混合实现
+
+3、Java线程调度
+	线程调度：系统为线程分配处理器使用权的过程
+	a、协同式线程调度（Cooperative Threads-Scheduling）
+		线程执行完自己的工作后，主动通知系统切换到另一个线程上
+		优点：实现简单，切换线程操作对当前线程可知（Lua语言中“协同例程”）
+		缺点：线程执行时间不可控，线程出现问题，一直不告知系统进行线程切换，一直阻塞
+	b、抢占式线程调度（Preemptive Threads-Scheduling）Java使用的线程调度方式
+		每个线程由系统来分配执行时间，线程的切换不由线程本身决定（Java中，Thread.yield()让出执行时间）
+		优点：线程的执行时间是系统可控的，不会有一个线程导致整个进程阻塞
+
+	Java语言设置了10个级别的线程优先级（Thread.MIN_PRIORITY至Thread.MAX_PRIORITY）
+		优先级不靠谱，原因：1、系统本身存在线程执行优先级。1、系统存在优先级算法
+
+4、线程状态转换
+	新建（New）：创建后尚未启动的线程
+	运行（Runable）：包括操作系统线程状态中的Running和Ready，可能正在执行，也可能等待着CPU为其分配执行时间
+	无限期等待（Waiting）：处于此状态的线程不会被分配CPU执行时间，它们要等待被其他线程显示的唤醒
+		没有设置Timeout参数的Object.wait()方法；
+		没有设置Timeout参数的Thread.join()方法；
+		LockSupport.park()方法。
+	限期等待（Timed Waiting）：处于此状态的线程不会被分配CPU执行时间，它们无须等待被线程显示的唤醒，在一定时间之后会由系统自动唤醒
+		Thread.sleep()方法；
+		设置了Timeout参数的Object.wait()方法；
+		设置了Timeout参数的Thread.join()方法；
+		LockSupport.parkNanos()方法。
+		LockSupport.parkUntil()方法。
+	阻塞（Blocked）：线程被阻塞了
+		与等待的区别：阻塞状态在等待着获取到一个排它锁，这个时间将在另外一个线程放弃这个锁的时候发生；
+		而等待状态是在等待一段时间或者唤醒动作的发生
+	
+	结束（Terminated）：已终止线程的线程状态
