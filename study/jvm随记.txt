@@ -20,6 +20,21 @@ JVM原理
 	JIT编译后的代码
 6、直接内存
 
+第三章 垃圾收集器与内存分配策略
+	• 理解GC日志
+	33.125：[GC [DefNew：3324K->152K(3712K)
+	125.125：[Full GC [Tenured：3324K->152K(3712K)
+		○ 最前面的数字：代表GC发生的时间（虚拟机启动以来经过的秒数）
+		○ GC日志开头
+		[GC	普通GC
+		[Full GC	本次GC发生了Stop-The-World
+		[Full GC(System)	调用了System.gc()触发的GC
+		○ GC发生区域
+		[DefNew	放到
+		[Tenured	本次GC发生了Stop-The-World
+		[Perm	调用了System.gc()触发的GC
+		○ GC后容量变化
+end
 
 第六、七章
 
@@ -70,7 +85,7 @@ Class文件结构
 		u2					access_flags			访问标志（类似class中的访问标志）
 		u2					name_index				简单名称
 		u2					descriptor_index		方法描述符
-		u2					attributes_count		
+		u2					attributes_count		属性个数
 		attribute_info		attributes				attributes_count个
 
 	简单名称：main() -> main，int m -> m
