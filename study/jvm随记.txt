@@ -52,7 +52,7 @@ Class文件结构
 		Little-Endian	0xcd		0xab		0x34		0x12
 
 两种数据类型(类似于C语言结构体的伪结构)
-	无符号数：u1、u2、u4、u8代表1byte、2byte、4byte、8byte
+	无符号数：u1、u2、u4、u8代表1byte、2byte、4byte、8byte，数字、索引引用、数量值、UTF-8编码构成的字符串值
 	表：由多个无符号数或者其他表作为数据项构成复合数据结构，所有表习惯以.info结尾
 
 
