@@ -163,6 +163,8 @@ SHOW ENGINES
 			
 			
 第五章
+	聚集索引：物理存储顺序按照逻辑存储顺序存放
+	辅助索引：
 	1、InnoDB支持索引
 		B+树索引
 		全文索引
@@ -195,6 +197,8 @@ SHOW ENGINES
 				为了减少拆分页(split)操作，优先使用Rotation旋转操作，左节点首先检查
 			b、删除
 				填充因子(fill factor)
+			c、B+树索引
+				python /usr/edwin/python/py_innodb_page_info.py -v /var/lib/mysql/edwin/t.ibd
 
 
 
