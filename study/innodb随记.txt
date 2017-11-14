@@ -140,6 +140,29 @@ SHOW ENGINES
 			3、重做日志缓冲
 				
 
+
+第三章
+	1、参数文件
+	2、日志文件
+		(1)错误日志
+			show variables like 'log_error'\G;
+		(2)慢查询日志
+			long_query_time					默认：10.000000精确到微妙	慢查询日志阈值		
+			log_slow_queries				默认：空，开启ON			是否开启慢查询日志	
+				5.6之后：slow_query_log=ON、slow_query_log_file=/var/log/xxx-slow.log
+			log_queries_not_using_indexes	开启ON						如果SQL语句没有使用索引，是否记录慢查询日志
+			log_throttle_queries_not_using_indexes	默认0，没有限制		每分钟允许记录到slow log的未使用索引的SQL语句次数
+
+			mysqldumpslow -s al -n 100 bogon-slow.log，查询执行时间最长的100条SQL语句
+			还可以通过mysql.slow_log查询
+				log_output：(动态、全局的)指定慢查询输出格式，默认FILE，将它设为TABLE然后就可以查询mysql架构下的slow_table表了
+
+		(3)查询日志
+		(4)二进制日志
+			
+
+
+
 第四章
 	1、索引组织表
 		表都是根据主键顺序组织存放的
@@ -183,32 +206,65 @@ SHOW ENGINES
 			innodb是面向列(row-oriented)的，也就是说数据是按行进行存放的
 
 	3、InnoDB的行记录格式
-		Compact(紧凑型)：5.1之后默认的存储格式
-		Redundant(冗余型)：兼容老版本
-		
 		show table status like 't1%'\G;
-
-第三章
-	1、参数文件
-	2、日志文件
-		(1)错误日志
-			show variables like 'log_error'\G;
-		(2)慢查询日志
-			long_query_time					默认：10.000000精确到微妙	慢查询日志阈值		
-			log_slow_queries				默认：空，开启ON			是否开启慢查询日志	
-				5.6之后：slow_query_log=ON、slow_query_log_file=/var/log/xxx-slow.log
-			log_queries_not_using_indexes	开启ON						如果SQL语句没有使用索引，是否记录慢查询日志
-			log_throttle_queries_not_using_indexes	默认0，没有限制		每分钟允许记录到slow log的未使用索引的SQL语句次数
-
-			mysqldumpslow -s al -n 100 bogon-slow.log，查询执行时间最长的100条SQL语句
-			还可以通过mysql.slow_log查询
-				log_output：(动态、全局的)指定慢查询输出格式，默认FILE，将它设为TABLE然后就可以查询mysql架构下的slow_table表了
-
-		(3)查询日志
-		(4)二进制日志
+		1)Compact(紧凑型)：5.1之后默认的存储格式
+			●非NULL变长字段长度列表
+				若列的长度小于255字节，用1字节表示(2的8次方=256)
+				若列的长度大于255字节，用2字节表示(2的16次方=65536)
+					Mysql数据库varchar类型最大长度限制65535
+			●NULL标志位：(书上说占1字节，实际是根据列数增加，1字节8列)
+				指示了该行数据中是否有NULL值，有则用1表示。
+			●记录头信息(record header)：固定占用5字节
+				★空2bit
+				★deleted_flag：1bit，该行是否已被删除
+				★min_rec_flag：1bit，为1，如果该记录是预先被定义为最小的纪录
+				★n_owned：4bit，该记录拥有的记录数
+				★heap_no：13bit，索引堆中该条记录的排序记录
+				★record_type：3bit，记录类型：
+					000表示普通
+					001表示B+树节点指针
+					010表示Infimum
+					011表示Supremum
+					1xx表示保留
+				★next_record：16bit，页中下一条记录的相对位置，偏移量
+			●若没有定义主键，每行还会增加一个rowid列，6字节
+			●两个隐藏列：
+				事务ID列：6字节
+				回滚指针列：7字节
+			●各列的数据
+		2)Redundant(冗余型)：兼容老版本
 			
-
-
+		3)行溢出数据
+			VARCHAR和BLOB、LOB、TEXT转换
+			数据页或未压缩的二进制大对象页，看数据页是否能存储两条行记录(否则失去了B+Tree的意义)
+			
+		4)Compressed和Dynamic行记录格式
+			Compact和Redundant行记录格式称为Antelope(羚羊)文件格式
+			Compressed和Dynamic行记录格式称为Barracuda(梭鱼)文件格式
+			
+			两种新记录格式对于存放BLOB中的数据采用了完全的行溢出方式
+				数据页中只存放20个字节的指针，实际数据都存放在Off Page中，
+			Compressed的另一个功能就是，存储在其中的数据会以zlib算法进行压缩
+			
+		5)CHAR的行结构存储
+			Mysql4.1版本开始，CHAR(N)中的N指的是字符的长度，而不是字节长度
+			如：SELECT a, CHAR_LENGTH(a), LENGTH(a) FROM j\G;
+			a:ab	CHAR_LENGTH(a):2	LENGTH(a):2
+			a:哈哈	CHAR_LENGTH(a):2	LENGTH(a):4
+	
+	4、InnoDB的数据页结构
+		7个部分组成：
+		●File Header(文件头)：固定38Byte
+			
+		●Page Header(页头)：固定56Byte
+		
+		●Infimum和Supremum Records
+		
+		●User Records(用户记录，即行记录)
+		●Free Space(空闲空间)
+		●Page Directory(页目录)
+		
+		●File Trailer(文件结尾信息)：固定8Byte
 
 第五章
 	聚集索引：物理存储顺序按照逻辑存储顺序存放
