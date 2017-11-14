@@ -140,7 +140,53 @@ SHOW ENGINES
 			3、重做日志缓冲
 				
 
+第四章
+	1、索引组织表
+		表都是根据主键顺序组织存放的
+		创建主键：
+			1)显示的创建，指定Primary Key
+			2)判断表中是否有非空的唯一索引(Unique Not Null),若有，按定义索引顺序第一个定义为主键
+			3)若不符合以上，InnoDB会创建一个6字节大小的指针
+	2、InnoDB逻辑存储结构
+		1)表空间(tablespace)
+			共享表空间：ibdata1
+			通过参数innodb_file_per_table，启动每张表内的数据单独存放到一个表空间
+			启用后
+				新的表空间：数据、索引、插入缓冲bitmap页
+				共享表空间：回滚(undo)信息，插入缓冲索引页、系统事务信息，二次写缓冲
+		2)段(segment)
+			数据段：Leaf node segment
+			索引段：Non-leaf node segment
+			回滚段：
+			由存储引擎自动管理
+		3)区(extent)
+			每个区大小固定为1MB，页的默认大小16KB，一个区有64个连续的页，
+			每个段开始时，先用32个页大小的碎片页(fragment page)来存放数据，在使用完这些碎片页之后开始64个连续页的申请
+			create table t1 (a int not null auto_increment, b varchar(7000), primary key(a)) engine=InnoDB;
+			
+			system ls -lh /var/lib/mysql/bvcs/t1.frm
+			
+			insert into t1 values (null, repeat('a', 7000));
+			
+			python /opt/python/py_innodb_page_info.py -v ./t1.frm
+		4)页(page)
+			默认每页大小16KB，1.2之后版本可以通过innodb_page_size设置每页大小为4K、8K、16K，设置完成后所有表中的页大小都为这个值，不可修改
+			1)数据页(B-tree Node)
+			2)undo页(undo Log Page)
+			3)系统页(System Page)
+			4)事务数据页(Transaction system page)
+			5)插入缓存位图页(Insert Buffer Bitmap)
+			6)插入缓冲空闲列表页(Insert Buffer Free List)
+			7)未压缩的二进制大对象页(Uncompressed BLOB Page)
+			8)压缩的二进制大对象页(Compressed BLOB Page)
+		5)行(row)
+			innodb是面向列(row-oriented)的，也就是说数据是按行进行存放的
 
+	3、InnoDB的行记录格式
+		Compact(紧凑型)：5.1之后默认的存储格式
+		Redundant(冗余型)：兼容老版本
+		
+		show table status like 't1%'\G;
 
 第三章
 	1、参数文件
@@ -161,7 +207,9 @@ SHOW ENGINES
 		(3)查询日志
 		(4)二进制日志
 			
-			
+
+
+
 第五章
 	聚集索引：物理存储顺序按照逻辑存储顺序存放
 	辅助索引：
