@@ -1,0 +1,161 @@
+问题【maven】：
+maven方式新建web工程
+
+选择webapp创建会少了许多麻烦
+<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+----------------------------------------------------
+
+问题【git】：
+提交本地代码到远程分支
+
+1、初始化本队仓库
+git init
+2、关联本地仓库到远程仓库
+git remote add origin https://github.com/edwin1215/spring.git
+3、添加要提交的文件到暂存区
+git add .
+4、提交代码到文件控制仓库
+git commit -am "init"
+5、将远程主机的更新，全部取回到本地
+git fetch origin
+6、拉取远程分支代码到本地
+git pull origin master
+7、提交本地代码到远程分支
+git push -u origin master:master
+8、强行推到远程分支
+git push -f origin master
+
+git push origin --delete develop
+git branch -D develop
+----------------------------------------------------
+
+问题【maven】：
+[INFO] Failed to configure plugin parameters for: org.apache.maven.plugins:maven-jar-plugin:2.2
+Cause: Cannot find setter nor field in org.apache.maven.archiver.ManifestConfiguration for 'useUniqueVersions'
+直译:找不到useUniqueVersions的setter方法
+解决：maven2.2.1版本的maven-jar-plugin不支持useUniqueVersions属性，切换为3.0之后的版本即可（用的3.0.4版本）
+----------------------------------------------------
+
+问题【git】：
+error: The following untracked working tree files would be overwritten by merge
+		bvcs_job_stat/.classpath
+		bvcs_job_stat/.project
+		bvcs_job_stat/.settings/org.eclipse.core.resources.prefs
+		bvcs_job_stat/.settings/org.eclipse.jdt.core.prefs
+		bvcs_scf_im_contract/.classpath
+		bvcs_scf_im_contract/.project
+		bvcs_scf_im_contract/.settings/org.eclipse.core.resources.prefs
+		...
+解决：将跟踪文件从本地删除，重新pull一次，再粘贴回工作空间，重新提交。
+----------------------------------------------------
+
+问题【git】：
+保存用户名密码：
+git config --global credential.helper store
+----------------------------------------------------
+idea的优势：
+1、查询文件速度远远快于eclipse
+2、对spring的支持，从注入类可以直接定位到xml文件
+3、
+
+idea【快捷键】：
+Ctrl + Shift + u			大小写切换
+Ctrl + Button1				go to class
+Ctrl + Alt + Button1		go to implements
+Ctrl + N					查找类文件
+Ctrl + Shift + N			查找所有文件
+Ctrl + Shift + Alt + N		查找类名、变量名
+Ctrl + Shift + F			查找文件里的内容
+
+Ctrl + H					查看类的继承结构
+Ctrl + Shift + H			查看方法的继承结构
+Ctrl + Alt + H				查看类或方法被调用情况
+Ctrl + Shift + I			原地参看类、方法的声明
+
+ctr + B						查看接口方法
+ctr + Alt + B				查看实现类方法
+
+Double Shift				查找全部
+Ctrl + Alt + L				格式化
+Ctrl + Alt + O				清理包
+Ctrl + Tab					选项卡切换
+Shift + Alt + ↑				光标所在行整体上移一行
+Alt + ↑						光标定位前一个方法
+Ctrl + W					递进式选中代码块
+Ctrl + J					插入自定义动态代码模板psvm、sout...
+Ctrl + P					方法参数提示显示
+Ctrl + Q					Ctrl + 1
+Alt + Enter					Ctrl + 1
+Ctrl + +/-					展开/折叠代码
+Alt + insert				生成代码
+Shift + F6					重构-重命名
+Ctrl + Shift + Enter		自动结束，自动加分号
+Ctrl + Enter				光标到下一行
+Ctrl + Alt + V				自动生成相应对象接收方法返回值
+
+自定义快捷键
+Ctrl + D					删除一行
+Ctrl + Y					复制一行
+Alt + ←/→					回退/前进 back/forward
+----------------------------------------------------
+
+
+
+问题【elasticsearch】：
+ERROR: bootstrap checks failed
+max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+
+解决：
+linux root 权限
+cp /etc/security/limits.conf /etc/security/limits.conf.bak
+cat /etc/security/limits.conf | grep -v "blive" > /tmp/system_limits.conf
+echo "blive hard nofile 65536" >> /tmp/system_limits.conf
+echo "blive soft nofile 65536" >> /tmp/system_limits.conf
+mv /tmp/system_limits.conf /etc/security/limits.conf
+
+cp /etc/sysctl.conf /etc/sysctl.conf.bak
+cat /etc/sysctl.conf | grep -v "vm.max_map_count" > /tmp/system_sysctl.conf
+echo "vm.max_map_count=262144" >> /tmp/system_sysctl.conf
+mv /tmp/system_sysctl.conf /etc/sysctl.conf
+----------------------------------------------------
+
+
+问题【elasticsearch】：
+elasticsearch-head搭建
+
+解决：
+yum -y install git
+git clone git://github.com/mobz/elasticsearch-head.git
+
+yum -y install xz
+xz -d node*.tar.xz
+tar -xvf node*.tar
+
+
+export NODE_HOME=/usr/elk/node-v6.9.1-linux-x64
+export PATH=$PATH:$NODE_HOME/bin
+
+source /etc/profile
+
+test：node -v  npm -v
+
+
+npm install -g grunt-cli
+
+test：grunt -version
+
+修改head/_site/app.js
+this.base_uri = this.config.base_uri || this.prefs.get("app-base_uri") || "http://xxx.xxx.xxx.xxx:9200";
+
+修改elasticsearch.yml
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+
+head目录中
+npm install
+
+启动node.js
+grunt server
+
+xxx.xxx.xxx.xxx:9100

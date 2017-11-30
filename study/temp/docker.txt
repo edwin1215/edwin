@@ -1,0 +1,20 @@
+
+第二章
+
+三大核心概念
+	镜像
+	容器
+	仓库
+	
+
+安装
+	CentOS6
+		sudo yum install -y http://mirrors.yun-idc.com/epel/6/i386/epel-release-6-8.noarch.rpm
+		rpm -ivh http://mirrors.yun-idc.com/epel/6/i386/epel-release-6-8.noarch.rpm
+		
+	Windows
+		1、下载Boot2Docker
+			https://github.com/boot2docker/windows-installer/releases
+			
+		2、下载Docker for Windows Installer
+			https://docs.docker.com/docker-for-windows/install/
